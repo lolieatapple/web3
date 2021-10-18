@@ -191,11 +191,11 @@ func CallFunctionWithData(ctx context.Context, client Client, privateKeyHex, add
 	if err != nil {
 		return nil, err
 	}
-	err = client.SendRawTransaction(ctx, raw)
+	hash, err := client.SendRawTransactionGetHash(ctx, raw)
 	if err != nil {
 		return nil, fmt.Errorf("cannot send transaction: %v", err)
 	}
-	return convertTx(signedTx, fromAddress), nil
+	return hash, nil
 }
 
 func isValidUrl(toTest string) bool {
@@ -315,12 +315,12 @@ func DeployContract(ctx context.Context, client Client, privateKeyHex string, bi
 	if err != nil {
 		return nil, err
 	}
-	err = client.SendRawTransaction(ctx, raw)
+	hash, err := client.SendRawTransactionGetHash(ctx, raw)
 	if err != nil {
 		return nil, fmt.Errorf("cannot send transaction: %v", err)
 	}
 
-	return convertTx(signedTx, fromAddress), nil
+	return hash, nil
 }
 
 // Send performs a regular native coin transaction (not a contract)

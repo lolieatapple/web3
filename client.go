@@ -43,6 +43,7 @@ type Client interface {
 	GetPendingTransactionCount(ctx context.Context, account common.Address) (uint64, error)
 	// SendRawTransaction sends the signed raw transaction bytes.
 	SendRawTransaction(ctx context.Context, tx []byte) error
+	SendRawTransactionGetHash(ctx context.Context, tx []byte) (*common.Hash, error)
 	// Call executes a call without submitting a transaction.
 	Call(ctx context.Context, msg CallMsg) ([]byte, error)
 	Close()
@@ -207,6 +208,12 @@ func (c *client) getTransactionCount(ctx context.Context, account common.Address
 
 func (c *client) SendRawTransaction(ctx context.Context, tx []byte) error {
 	return c.r.CallContext(ctx, nil, "eth_sendRawTransaction", common.ToHex(tx))
+}
+
+func (c *client) SendRawTransactionGetHash(ctx context.Context, tx []byte) (*common.Hash, error) {
+	var txHash common.Hash
+	err := c.r.CallContext(ctx, &txHash, "eth_sendRawTransaction", common.ToHex(tx))
+	return &txHash, err
 }
 
 func (c *client) getBlock(ctx context.Context, method string, hashOrNum string, includeTxs bool) (*Block, error) {
